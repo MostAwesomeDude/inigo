@@ -1,4 +1,5 @@
-from random import expovariate
+import random
+
 
 class Inigo(object):
     """
@@ -7,6 +8,9 @@ class Inigo(object):
     Inigos are append-only sequences. When they grow, they occasionally
     discard data, so that they tend towards a logarithmic bound on their size,
     rather than the standard linear bound.
+
+    The size complexity of an inigo is linear for all operations, and
+    recording data in an inigo is linear in time in the worst case.
 
     The half-life of an inigo is the average time taken to discard half of the
     information recorded on the inigo.
@@ -20,21 +24,31 @@ class Inigo(object):
     If the inigo is bounded, it will never grow beyond the bound; data which
     would exceed the bound will be discarded when new data is recorded.
 
-    The size complexity of an inigo is linear for all operations, and
-    recording data in an inigo is linear in time in the worst case.
+    The ``r`` parameter is an optional callable which yields random indices
+    into the list. It can be used to alter inigo behavior, or more usefully to
+    make inigo data loss predictable. It defaults to ``random.expovariate``
+    and should generally be a stream of exponentially-distributed integers.
     """
 
-    def __init__(self, halflife, compressor, bound=0):
+    def __init__(self, halflife, compressor, bound=0, r=None):
         self._l = []
         self.halflife = halflife
         self.compressor = compressor
         self.bound = bound
+
+        if r is None:
+            self.r = random.expovariate
+        else:
+            self.r = r
 
     def __repr__(self):
         return "Inigo(%r)" % self._l
 
     def __str__(self):
         return "Inigo(%s)" % self._l
+
+    def __eq__(self, other):
+        return list(self) == list(other)
 
     def __len__(self):
         return len(self._l)
@@ -56,7 +70,7 @@ class Inigo(object):
         l.append(item)
 
         # Get a random possible index.
-        i = int(expovariate(1.0 / self.halflife))
+        i = int(self.r(1.0 / self.halflife))
         i = len(l) - 1 - i
 
         if i > 0:
