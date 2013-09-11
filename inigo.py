@@ -3,6 +3,25 @@ from random import expovariate
 class Inigo(object):
     """
     A sequence which loses details of information as it grows.
+
+    Inigos are append-only sequences. When they grow, they occasionally
+    discard data, so that they tend towards a logarithmic bound on their size,
+    rather than the standard linear bound.
+
+    The half-life of an inigo is the average time taken to discard half of the
+    information recorded on the inigo.
+
+    The compressor is a function which takes two items in an inigo and returns
+    a single item which summarizes the two inputs. Compressors can choose one
+    of the two inputs to return, or create new items for the inigo to
+    remember.
+
+    The bound is an optional integer which limits the total size of the inigo.
+    If the inigo is bounded, it will never grow beyond the bound; data which
+    would exceed the bound will be discarded when new data is recorded.
+
+    The size complexity of an inigo is linear for all operations, and
+    recording data in an inigo is linear in time in the worst case.
     """
 
     def __init__(self, halflife, compressor, bound=0):
@@ -21,6 +40,10 @@ class Inigo(object):
         return len(self._l)
 
     def record(self, item):
+        """
+        Remember an item for an indeterminate amount of time.
+        """
+
         l = self._l
 
         # Do the actual insertion.
@@ -44,8 +67,16 @@ class Inigo(object):
 
 
 def newer(old, new):
+    """
+    Compress, preferring the newer of the two items.
+    """
+
     return new
 
 
 def older(old, new):
+    """
+    Compress, preferring the older of the two items.
+    """
+
     return old
