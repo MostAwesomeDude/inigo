@@ -45,16 +45,6 @@ class Inigo(object):
     def __iter__(self):
         return iter(self._l)
 
-    def aslist(self):
-        """
-        Convert an inigo to a list.
-
-        The resulting list is safe to mutate without disturbing the inigo that
-        it comes from.
-        """
-
-        return self._l[:]
-
     def record(self, item):
         """
         Remember an item for an indeterminate amount of time.
