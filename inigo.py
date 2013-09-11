@@ -100,3 +100,29 @@ def older(old, new):
     """
 
     return old
+
+
+from unittest import TestCase
+
+
+class TestInigo(TestCase):
+
+    def test_bound(self):
+        i = Inigo(2, older, bound=10)
+        # Over-saturate. 2**10 is 1024, so 2000 items of history should
+        # overfill the inigo.
+        for x in range(2000):
+            i.record(x)
+        self.assertEqual(len(i), 10)
+
+    def test_repeatability(self):
+        r1 = random.Random(42).expovariate
+        i1 = Inigo(2, older, bound=10, r=r1)
+        r2 = random.Random(42).expovariate
+        i2 = Inigo(2, older, bound=10, r=r2)
+
+        for x in range(5000):
+            i1.record(x)
+            i2.record(x)
+
+        self.assertEqual(i1, i2)
