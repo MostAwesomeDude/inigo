@@ -11,7 +11,7 @@ instead of linearly, discarding information as they grow.
 License
 =======
 
-Inigo is available under the MIT/X11 license; see ``LICENSE`` for details.
+Inigo is available under the Apache 2.0 license; see ``LICENSE`` for details.
 
 Credits
 =======
